@@ -16,12 +16,3 @@ class DbManager():
     
     def create_engine(self):
         return create_engine("mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8mb4".format(self.user, self.password, self.host, self.port, self.db))
-
-# a=DbManager()
-# engine=a.create_engine()
-# print(engine)
-
-# d = {'col1': [1, 2], 'col2': [3, 4]}
-# df = pd.DataFrame(data=d)
-
-# df.to_sql('test', con=engine)
