@@ -6,11 +6,11 @@ class CrapyScrapy(scrapy.Spider):
     name = "CrapyScrapy"
     start_urls = [
         'https://www.nekretnine.rs/stambeni-objekti/stanovi/izdavanje-prodaja/prodaja/lista/po-stranici/20/',
-        # 'https://www.nekretnine.rs/stambeni-objekti/stanovi/izdavanje-prodaja/izdavanje/lista/po-stranici/20/',
-        # 'https://www.nekretnine.rs/stambeni-objekti/kuce/izdavanje-prodaja/prodaja/lista/po-stranici/20/',
-        # 'https://www.nekretnine.rs/stambeni-objekti/kuce/izdavanje-prodaja/izdavanje/lista/po-stranici/20/'
-        # 'https://www.nekretnine.rs/stambeni-objekti/stanovi/izdavanje-prodaja/izdavanje/lista/po-stranici/10/',
-        # 'https://www.4zida.rs/prodaja-stanova'
+        'https://www.nekretnine.rs/stambeni-objekti/stanovi/izdavanje-prodaja/izdavanje/lista/po-stranici/20/',
+        'https://www.nekretnine.rs/stambeni-objekti/kuce/izdavanje-prodaja/prodaja/lista/po-stranici/20/',
+        'https://www.nekretnine.rs/stambeni-objekti/kuce/izdavanje-prodaja/izdavanje/lista/po-stranici/20/'
+        # 'https://www.nekretnine.rs/stambeni-objekti/stanovi/stari-grad-dorcol-91m2/Nkzma6UHv08/',
+        # 'https://www.nekretnine.rs/stambeni-objekti/stanovi/stari-grad-gundulicev-venac-svetozara-miletica-20-55m2-500-eur/NkGcPbi1YcO/'
     ]
 
     def parse(self, response):
@@ -21,6 +21,7 @@ class CrapyScrapy(scrapy.Spider):
         props_on_page = self.get_properties_on_page(response)
         for prop_page in props_on_page:
             yield response.follow(prop_page, callback=self.parse_prop)
+        # yield response.follow(response.url, callback=self.parse_prop)
 
         next_page = response.css("a.next-article-button::attr(href)").get()
         if next_page is not None:
@@ -41,6 +42,13 @@ class CrapyScrapy(scrapy.Spider):
 
         return -1
 
+    def govno2(self, tag, pat):
+        for li in tag:
+            if li.css("li span::text").extract()[0] == pat:
+                return tag.index(li)
+
+        return -1
+
     def get_details(self, response):
         details_tag = response.css(
             "section#detalji div.property__amenities")[0]
@@ -48,10 +56,18 @@ class CrapyScrapy(scrapy.Spider):
         add_type_index = self.govno(details_tag.css("ul li"), "Transakcija:")
         add_type = details_tag.css("ul li:nth-child({}) strong::text".format(
             add_type_index)).get().strip() if add_type_index > -1 else None
+        if add_type == 'Prodaja':
+            add_type = 's'
+        if add_type == 'Izdavanje':
+            add_type = 'r'
 
         size_index = self.govno(details_tag.css("ul li"), "Kvadratura:")
         size = float(details_tag.css("ul li:nth-child({}) strong::text".format(
             size_index)).get().strip().split(" ")[0]) if size_index > -1 else None
+
+        area_index = self.govno(details_tag.css("ul li"), "Površina zemljišta:")
+        area = float(details_tag.css("ul li:nth-child({}) strong::text".format(
+            area_index)).get().strip().split(" ")[0]) if area_index > -1 else None
 
         year_index = self.govno(details_tag.css("ul li"), "Godina izgradnje:")
         year = int(details_tag.css("ul li:nth-child({}) strong::text".format(year_index)
@@ -81,11 +97,21 @@ class CrapyScrapy(scrapy.Spider):
             total_storeys_index)).get().strip()) if total_storeys_index > -1 else None
 
         registered_index = self.govno(details_tag.css("ul li"), "Uknjiženo:")
-        registered = details_tag.css("ul li:nth-child({}) strong::text".format(
-            registered_index)).get().strip() if registered_index > -1 else None
-        if registered != None:
-            registered = True if registered == 'Da' else False
-        return add_type, size, year, rooms, toiletes, storey, total_storeys, registered
+
+        if registered_index == -1:
+            main_tag = response.css("div.property__main-details ul li")
+            registered_index=self.govno2(main_tag, "Uknjiženo:")   
+            print(registered_index)   
+            print(main_tag[registered_index])   
+            registered = main_tag[registered_index].css("li span::text").extract()[1] if registered_index > -1 else None
+            if registered != None:
+                registered = 1 if registered == 'Da' else 0
+        else:
+            registered = details_tag.css("ul li:nth-child({}) strong::text".format(
+                registered_index)).get().strip() if registered_index > -1 else None
+            if registered != None:
+                registered = 1 if registered == 'Da' else 0
+        return add_type, size, area, year, rooms, toiletes, storey, total_storeys, registered
 
     def get_price(self, response):
         price = response.css("h4.stickyBox__price::text").get()
@@ -100,14 +126,14 @@ class CrapyScrapy(scrapy.Spider):
         main_tag = response.css("div.property__main-details ul li")
         heat = main_tag[2].css("li span::text").extract()[1]
         parking = main_tag[3].css("li span::text").extract()[1]
-        parking = True if parking == 'Da' else False
+        parking = 1 if parking == 'Da' else 0
         return heat, parking
 
     def parse_prop(self, response):
         item = WebcrawlerItem()
         prop_type = 'a' if response.url.split("/")[-4] == 'stanovi' else 'h'
         location = self.get_location(response)
-        add_type, size, year, rooms, toiletes, storey, total_storeys, registered = self.get_details(
+        add_type, size, area, year, rooms, toiletes, storey, total_storeys, registered = self.get_details(
             response)
         price = self.get_price(response)
         heat_type, parking = self.get_heat_parking(response)
@@ -128,8 +154,10 @@ class CrapyScrapy(scrapy.Spider):
         item["registered"] = registered
         item["price"] = price
         item["other"] = other
-        item["area"] = None
+        item["area"] = area
         item["heat_type"] = heat_type
         item["parking"] = parking
+
+        print(item)
 
         yield item
