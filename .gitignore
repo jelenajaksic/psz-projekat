@@ -1,2 +1,5 @@
 .venv
 src/webcrawler/webcrawler/filename.csv
+*.pyc
+__pycache__/
+*.py[cod]

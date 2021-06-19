@@ -9,6 +9,26 @@ from rest_framework.decorators import api_view
 def get_all(request):
     db = DbManager.Instance()
     con = db.create_engine()
-    df = pd.read_sql('select * from realestate limit 5', con=con)
+    df = pd.read_sql("""select * from realestate limit 5""", con=con)
     result = df.to_dict('records')
     return Response(result)
+
+@api_view(['GET'])
+def get_most_common(request):
+    db = DbManager.Instance()
+    con = db.create_engine()
+    df_sell = pd.read_sql("""select block, count(*) as number from db.realestate where add_type = 's' and location='Beograd' group by block order by number desc limit 10""", con=con)
+    result_sell = df_sell.to_dict('records')
+    df_rent = pd.read_sql("""select block, count(*) as number from db.realestate where add_type = 'r' and location='Beograd' group by block order by number desc limit 10""", con=con)
+    result_rent = df_rent.to_dict('records')
+    df = pd.read_sql("""select block, count(*) as number from db.realestate where location='Beograd' group by block order by number desc limit 10""", con=con)
+    result_all = df.to_dict('records')
+
+    result = {
+        "sell": result_sell,
+        "rent": result_rent,
+        "all": result_all
+    }
+
+    return Response(result)
+
