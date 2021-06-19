@@ -6,7 +6,8 @@ app_name = 'api'
 
 urlpatterns = [
     path('realestate', views.get_all, name='get_all'),
-    path('most_common', views.get_most_common, name='get_most_common')
+    path('most_common', views.get_most_common, name='get_most_common'),
+    path('count_props_by_size', views.get_props_by_size, name='get_props_by_size')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
