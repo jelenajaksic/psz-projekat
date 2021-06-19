@@ -21,7 +21,7 @@ class WebcrawlerPipeline:
     def process_item(self, item, spider):
         # print(item)
         # df=pd.DataFrame.from_dict(item)
-        df = pd.DataFrame([item], columns=["url", "property_type", "location", "add_type", "size", "year", "area", "storey", "total_storeys", "registered", "heat_type", "rooms", "toiletes", "parking", "price", "other"])
+        df = pd.DataFrame([item], columns=["url", "property_type", "location", "block", "distance_from_center", "add_type", "size", "year", "area", "storey", "total_storeys", "registered", "heat_type", "rooms", "toiletes", "parking", "price", "other"])
         # if not os.path.isfile('filename.csv'):
         df.to_sql('realestate', index=False, con=self.con, if_exists='append')
         # else:  # else it exists so append without writing the header

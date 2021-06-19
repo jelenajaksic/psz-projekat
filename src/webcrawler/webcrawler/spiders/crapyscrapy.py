@@ -1,5 +1,25 @@
 import scrapy
 from ..items import *
+from math import radians, cos, sin, asin, sqrt
+
+def haversine(lon2, lat2):
+    """
+    Calculate the great circle distance between two points 
+    on the earth (specified in decimal degrees)
+    """
+
+    lon1 = 20.4600347
+    lat1 = 44.8161635
+    # convert decimal degrees to radians 
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    r = 6371 # Radius of earth in kilometers. Use 3956 for miles
+    return c * r
 
 
 class CrapyScrapy(scrapy.Spider):
@@ -14,10 +34,6 @@ class CrapyScrapy(scrapy.Spider):
     ]
 
     def parse(self, response):
-        # album_links_on_page = self.get_albums_on_page(response)
-        # for album_link in album_links_on_page:
-        #     yield response.follow(album_link, callback=self.parse_album)
-
         props_on_page = self.get_properties_on_page(response)
         for prop_page in props_on_page:
             yield response.follow(prop_page, callback=self.parse_prop)
@@ -32,8 +48,17 @@ class CrapyScrapy(scrapy.Spider):
         return prop_links
 
     def get_location(self, response):
-        # print(response.css("div.property__location ul"))
-        return response.css("div.property__location ul li:nth-child(3)::text").get()
+        # print()
+        location_tag=response.css("div.property__location ul li")
+        if len(location_tag)>2:
+            location = location_tag[2].css("li::text").get()
+        else:
+            location = location_tag[1].css("li::text").get()
+        if location=='Beograd':
+            block = location_tag[3].css("li::text").get()
+        else:
+            block = None
+        return location, block
 
     def govno(self, tag, pat):
         for li in tag:
@@ -101,8 +126,8 @@ class CrapyScrapy(scrapy.Spider):
         if registered_index == -1:
             main_tag = response.css("div.property__main-details ul li")
             registered_index=self.govno2(main_tag, "Uknjiženo:")   
-            print(registered_index)   
-            print(main_tag[registered_index])   
+            # print(registered_index)   
+            # print(main_tag[registered_index])   
             registered = main_tag[registered_index].css("li span::text").extract()[1] if registered_index > -1 else None
             if registered != None:
                 registered = 1 if registered == 'Da' else 0
@@ -131,19 +156,27 @@ class CrapyScrapy(scrapy.Spider):
 
     def parse_prop(self, response):
         item = WebcrawlerItem()
+        location, block = self.get_location(response)
+        if location == 'Beograd':
+            js=response.css("section#lokacija script::text").extract()[-1]
+            lat_long=js.replace('\n','').replace(' ','').strip().split(",")
+            lng=float(lat_long[1].split("=")[1])
+            lat=float(lat_long[2].split("=")[1])
+            distance_from_center = haversine(lng, lat)
+        else:
+            distance_from_center=None
         prop_type = 'a' if response.url.split("/")[-4] == 'stanovi' else 'h'
-        location = self.get_location(response)
         add_type, size, area, year, rooms, toiletes, storey, total_storeys, registered = self.get_details(
             response)
         price = self.get_price(response)
         heat_type, parking = self.get_heat_parking(response)
         other = ''
-        # print(prop_type, location, add_type,size,year,rooms,toiletes,storey,total_storeys,registered, price)
-        # print(heat_type, parking)
 
         item["url"] = response.url
         item["property_type"] = prop_type
         item["location"] = location
+        item["block"] = block
+        item["distance_from_center"]=distance_from_center
         item["add_type"] = add_type
         item["size"] = size
         item["year"] = year
@@ -158,6 +191,6 @@ class CrapyScrapy(scrapy.Spider):
         item["heat_type"] = heat_type
         item["parking"] = parking
 
-        print(item)
+        # print(item)
 
         yield item

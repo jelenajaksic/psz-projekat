@@ -10,6 +10,8 @@ class WebcrawlerItem(scrapy.Item):
     url=scrapy.Field()
     property_type = scrapy.Field()
     location = scrapy.Field()
+    block = scrapy.Field()
+    distance_from_center = scrapy.Field()
     add_type = scrapy.Field()
     size = scrapy.Field()
     year = scrapy.Field()
