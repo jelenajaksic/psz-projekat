@@ -55,7 +55,6 @@ export default {
       $axios.get('/count_props_by_size'),
       $axios.get('/count_props_by_year'),
     ])
-    console.log(one.data)
     return {
       commonSellLabels: one.data.sell.labels,
       commonSellData: one.data.sell.data,

@@ -106,3 +106,59 @@ def get_props_by_year(request):
     """, con=con)
     result = df.to_dict('records')
     return Response(result)
+
+
+@api_view(['GET'])
+def get_number_of_properties(request):
+    db = DbManager.Instance()
+    con = db.create_engine()
+    df = pd.read_sql(
+        'select count(*) as num from db.realestate where add_type = \'s\'', con=con)
+    sell = df.num.iloc[0]
+    df = pd.read_sql(
+        'select count(*) as num from db.realestate where add_type = \'r\'', con=con)
+    rent = df.num.iloc[0]
+    df = pd.read_sql('select count(*) as num from db.realestate', con=con)
+    all = df.num.iloc[0]
+    result = {
+        "sell": sell,
+        "rent": rent,
+        "all": all
+    }
+    return Response(result)
+
+
+@api_view(['GET'])
+def get_number_of_properties_by_city(request):
+    db = DbManager.Instance()
+    con = db.create_engine()
+    df = pd.read_sql(
+        'select location, COUNT(*) as number from db.realestate where add_type = \'s\' group by location order by number desc', con=con)
+    df.location = df.apply(lambda x: x.location.title(), axis=1)
+    result = df.fillna("").to_dict('records')
+    return Response(result)
+
+@api_view(['GET'])
+def get_registration(request):
+    db = DbManager.Instance()
+    con = db.create_engine()
+    house = pd.read_sql(
+        "select registered, count(*) as number from db.realestate where property_type = 'h' group by registered", con=con)
+    apartment = pd.read_sql(
+        "select registered, count(*) as number from db.realestate where property_type = 'a' group by registered", con=con)
+    h = house.fillna("").to_dict('records')
+    a = apartment.fillna("").to_dict('records')
+    print(h[2])
+    result = {
+        'houses': {
+            'registered': h[2]['number'],
+            'unregistered': h[1]['number'],
+            'nodata': h[0]['number']
+        },
+        'apartments': {
+            'registered': a[2]['number'],
+            'unregistered': a[1]['number'],
+            'nodata': a[0]['number']
+        }
+    }
+    return Response(result)

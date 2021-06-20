@@ -5,7 +5,9 @@
     disable-pagination
     disable-sort
     hide-default-footer
+    fixed-header
     class="elevation-0"
+    height="450px"
   />
 </template>
 
@@ -20,7 +22,7 @@ export default {
   data() {
     return {
       headers: [
-        { text: 'Part of the city', value: 'block' },
+        { text: 'Location', value: 'location' },
         { text: 'Number', value: 'number' },
       ],
     }
