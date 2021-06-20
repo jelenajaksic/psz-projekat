@@ -182,3 +182,24 @@ def get_sell_rent_ratio(request):
     """, con=con)
     result = df.to_dict('records')
     return Response(result)
+
+@api_view(['GET'])
+def get_props_by_price_category(request):
+    db = DbManager.Instance()
+    con = db.create_engine()
+    df = pd.read_sql("""
+    select x, count(*) as y from
+        (SELECT price,
+        CASE
+            WHEN price < 49999 THEN 'Less then 49,999'
+            WHEN price >= 50000 and price <= 99999 THEN '50,000 - 99,999'
+            WHEN price >=100000 and price <= 149999 THEN '100,000 - 149,999'
+            WHEN price >= 150000 and price <= 199999 THEN '150,000 - 199,999'
+            WHEN price >=200000 THEN 'Greater then 200,000'
+        ELSE 'No price data'
+        END AS x
+        FROM db.realestate where add_type='s') a
+    group by x 
+    """, con=con)
+    result = df.to_dict('records')
+    return Response(result)

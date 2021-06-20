@@ -15,7 +15,8 @@ urlpatterns = [
          name='get_number_of_properties_by_city'),
     path('registration_count', views.get_registration,
          name='get_registration'),
-    path('sell_rent_ratio', views.get_sell_rent_ratio, name='get_sell_rent_ratio')
+    path('sell_rent_ratio', views.get_sell_rent_ratio, name='get_sell_rent_ratio'),
+    path('count_props_by_price_category', views.get_props_by_price_category, name='get_props_by_price_category')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -53,6 +53,14 @@
         </v-card-text>
       </v-card>
     </v-col>
+    <v-col cols="12" lg="4">
+      <v-card class="elevation-0">
+        <v-card-title class="headline">Count by price</v-card-title>
+        <v-card-text>
+          <bar-chart :series="countByPrice" :categories="priceCategories" />
+        </v-card-text>
+      </v-card>
+    </v-col>
   </v-row>
 </template>
 
@@ -64,11 +72,12 @@ import SimpleDonut from '../components/SimpleDonut'
 export default {
   components: { BarChart, FullDonut, SimpleDonut },
   async asyncData({ $axios }) {
-    const [one, two, three, four] = await Promise.all([
+    const [one, two, three, four, five] = await Promise.all([
       $axios.get('/most_common'),
       $axios.get('/count_props_by_size'),
       $axios.get('/count_props_by_year'),
       $axios.get('/sell_rent_ratio'),
+      $axios.get('/count_props_by_price_category'),
     ])
     return {
       commonSellLabels: one.data.sell.labels,
@@ -79,15 +88,23 @@ export default {
       commonAllData: one.data.all.data,
       countBySize: [
         {
+          name: 'Number of properties',
           data: two.data,
         },
       ],
       countByYear: [
         {
+          name: 'Number of properties',
           data: three.data,
         },
       ],
       sellRentRatio: four.data,
+      countByPrice: [
+        {
+          name: 'Number of properties',
+          data: five.data,
+        },
+      ],
     }
   },
   data() {
@@ -117,6 +134,14 @@ export default {
         '2001 - 2010',
         '2011 - 2020',
         'Aftrer 2021',
+      ],
+      priceCategories: [
+        'Less then 49,999',
+        '50,000 - 99,999',
+        '100,000 - 149,999',
+        '150,000 - 199,999',
+        'Greater then 200,000',
+        'No price data',
       ],
     }
   },
