@@ -40,20 +40,35 @@
         </v-card-text>
       </v-card>
     </v-col>
+    <v-col v-for="item in sellRentRatio" :key="item.location" cols="12" lg="4">
+      <v-card class="elevation-0">
+        <v-card-title class="headline">
+          Sell / Rent Ratio for {{ item.location }}
+        </v-card-title>
+        <v-card-text>
+          <simple-donut
+            :series="[item.sell, item.rent]"
+            :labels="['Sell', 'Rent']"
+          />
+        </v-card-text>
+      </v-card>
+    </v-col>
   </v-row>
 </template>
 
 <script>
 import BarChart from '../components/BarChart.vue'
 import FullDonut from '../components/FullDonut.vue'
+import SimpleDonut from '../components/SimpleDonut'
 // import MostCommon from '../components/MostCommon.vue'
 export default {
-  components: { BarChart, FullDonut },
+  components: { BarChart, FullDonut, SimpleDonut },
   async asyncData({ $axios }) {
-    const [one, two, three] = await Promise.all([
+    const [one, two, three, four] = await Promise.all([
       $axios.get('/most_common'),
       $axios.get('/count_props_by_size'),
       $axios.get('/count_props_by_year'),
+      $axios.get('/sell_rent_ratio'),
     ])
     return {
       commonSellLabels: one.data.sell.labels,
@@ -72,6 +87,7 @@ export default {
           data: three.data,
         },
       ],
+      sellRentRatio: four.data,
     }
   },
   data() {
@@ -80,6 +96,7 @@ export default {
       commonSell: [],
       commonRent: [],
       commonAll: [],
+      sellRentRatio: [],
       sizeCategories: [
         'Less than 35',
         '36 - 50',

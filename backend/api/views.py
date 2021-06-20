@@ -162,3 +162,23 @@ def get_registration(request):
         }
     }
     return Response(result)
+
+@api_view(['GET'])    
+def get_sell_rent_ratio(request):
+    db = DbManager.Instance()
+    con = db.create_engine()
+    df = pd.read_sql("""
+    select location, sell, rent, sell/rent, sell+rent as total from
+	(select a.location as location, a.sell as sell, b.rent as rent from 
+		(select location, count(*) as sell from db.realestate where add_type='s' group by location) as a
+		left join
+		(select location, count(*) as rent from db.realestate where add_type='r' group by location) as b 
+		on a.location=b.location
+	) a
+    where location in 
+        (select location from 
+            (select location, count(*) as number from db.realestate group by location order by number desc limit 5) a
+        )  
+    """, con=con)
+    result = df.to_dict('records')
+    return Response(result)
