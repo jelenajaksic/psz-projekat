@@ -3,16 +3,30 @@ from .lib.db_manager import DbManager
 import pandas as pd
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+import json
 
 # Create your views here.
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def get_all(request):
     db = DbManager.Instance()
     con = db.create_engine()
-    df = pd.read_sql("""select * from realestate limit 5""", con=con)
-    result = df.to_dict('records')
+    body = json.loads(request.body.decode('utf-8'))
+    page = body['page']
+    itemsPerPage = body['itemsPerPage']
+    sortBy = body['sortBy']
+    sortDesc = body['sortDesc']
+    start = (page-1)*itemsPerPage
+    end = page*itemsPerPage
+
+    if len(sortBy) > 0:
+        df = pd.read_sql(
+            "select * from realestate order by {} {} limit {},{}".format(sortBy[0], 'desc' if sortDesc[0] == True else 'asc', start, itemsPerPage), con=con)
+    else:
+        df = pd.read_sql(
+            "select * from realestate limit {},{}".format(start, itemsPerPage), con=con)
+    result = df.fillna("").to_dict('records')
     return Response(result)
 
 
@@ -22,18 +36,23 @@ def get_most_common(request):
     con = db.create_engine()
     df_sell = pd.read_sql(
         """select block, count(*) as number from db.realestate where add_type = 's' and location='Beograd' group by block order by number desc limit 10""", con=con)
-    result_sell = df_sell.to_dict('records')
+    result_sell_labels = df_sell.block
+    result_sell_data = df_sell.number
     df_rent = pd.read_sql(
         """select block, count(*) as number from db.realestate where add_type = 'r' and location='Beograd' group by block order by number desc limit 10""", con=con)
-    result_rent = df_rent.to_dict('records')
+    # result_rent = df_rent.to_dict('records')
+    result_rent_labels = df_rent.block
+    result_rent_data = df_rent.number
     df = pd.read_sql(
         """select block, count(*) as number from db.realestate where location='Beograd' group by block order by number desc limit 10""", con=con)
-    result_all = df.to_dict('records')
+    # result_all = df.to_dict('records')
+    result_all_labels = df.block
+    result_all_data = df.number
 
     result = {
-        "sell": result_sell,
-        "rent": result_rent,
-        "all": result_all
+        "sell": {"labels": result_sell_labels, "data": result_sell_data},
+        "rent": {"labels": result_rent_labels, "data": result_rent_data},
+        "all": {"labels": result_all_labels, "data": result_all_data}
     }
 
     return Response(result)
@@ -61,6 +80,7 @@ def get_props_by_size(request):
     """, con=con)
     result = df.to_dict('records')
     return Response(result)
+
 
 @api_view(['GET'])
 def get_props_by_year(request):

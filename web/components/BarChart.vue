@@ -3,7 +3,7 @@
     type="bar"
     height="350"
     :options="chartOptions"
-    :series="series"
+    :series="[{ name: 'Number of properties', series: series }]"
   ></apexchart>
 </template>
 

@@ -3,8 +3,8 @@
     <v-col cols="12" lg="4">
       <v-card class="elevation-0">
         <v-card-title class="headline"> Most common in BGD</v-card-title>
-        <v-card-text>
-          <most-common :items="commonAll" />
+        <v-card-text he>
+          <full-donut :series="commonAllData" :labels="commonAllLabels" />
         </v-card-text>
       </v-card>
     </v-col>
@@ -12,7 +12,7 @@
       <v-card class="elevation-0">
         <v-card-title class="headline"> Most common sell in BGD</v-card-title>
         <v-card-text>
-          <most-common :items="commonSell" />
+          <full-donut :series="commonSellData" :labels="commonSellLabels" />
         </v-card-text>
       </v-card>
     </v-col>
@@ -20,7 +20,7 @@
       <v-card class="elevation-0">
         <v-card-title class="headline"> Most common rent in BGD</v-card-title>
         <v-card-text>
-          <most-common :items="commonRent" />
+          <full-donut :series="commonRentData" :labels="commonRentLabels" />
         </v-card-text>
       </v-card>
     </v-col>
@@ -40,38 +40,29 @@
         </v-card-text>
       </v-card>
     </v-col>
-    <v-col cols="12">
-      <v-card class="elevation-0">
-        <v-card-title class="headline"> Realestate </v-card-title>
-        <v-card-text>
-          <v-data-table
-            :headers="headers"
-            :items="realestate"
-            :items-per-page="5"
-            class="elevation-0"
-          />
-        </v-card-text>
-      </v-card>
-    </v-col>
   </v-row>
 </template>
 
 <script>
 import BarChart from '../components/BarChart.vue'
-import MostCommon from '../components/MostCommon.vue'
+import FullDonut from '../components/FullDonut.vue'
+// import MostCommon from '../components/MostCommon.vue'
 export default {
-  components: { MostCommon, BarChart },
+  components: { BarChart, FullDonut },
   async asyncData({ $axios }) {
     const [one, two, three] = await Promise.all([
       $axios.get('/most_common'),
       $axios.get('/count_props_by_size'),
       $axios.get('/count_props_by_year'),
     ])
-
+    console.log(one.data)
     return {
-      commonSell: one.data.sell,
-      commonRent: one.data.rent,
-      commonAll: one.data.all,
+      commonSellLabels: one.data.sell.labels,
+      commonSellData: one.data.sell.data,
+      commonRentLabels: one.data.rent.labels,
+      commonRentData: one.data.rent.data,
+      commonAllLabels: one.data.all.labels,
+      commonAllData: one.data.all.data,
       countBySize: [
         {
           data: two.data,
@@ -110,12 +101,6 @@ export default {
         '2001 - 2010',
         '2011 - 2020',
         'Aftrer 2021',
-      ],
-      headers: [
-        { text: 'Location', value: 'location' },
-        { text: 'URL', value: 'url' },
-        { text: 'Add Type', value: 'add_type' },
-        { text: 'Property Type', value: 'property_type' },
       ],
     }
   },
