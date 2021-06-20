@@ -201,5 +201,5 @@ def get_props_by_price_category(request):
         FROM db.realestate where add_type='s') a
     group by x 
     """, con=con)
-    result = df.to_dict('records')
+    result = df.fillna("").to_dict('records')
     return Response(result)

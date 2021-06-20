@@ -141,7 +141,6 @@ export default {
         '100,000 - 149,999',
         '150,000 - 199,999',
         'Greater then 200,000',
-        'No price data',
       ],
     }
   },
