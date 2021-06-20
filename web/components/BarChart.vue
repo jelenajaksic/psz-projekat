@@ -14,6 +14,10 @@ export default {
       type: Array,
       required: true,
     },
+    categories: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
@@ -46,16 +50,7 @@ export default {
           colors: ['transparent'],
         },
         xaxis: {
-          categories: [
-            'Less than 35',
-            '36 - 50',
-            '51 - 65',
-            '66 - 80',
-            '81 - 95',
-            '96 - 110',
-            'More than 110',
-            'No size data',
-          ],
+          categories: this.categories,
         },
         yaxis: {
           title: {

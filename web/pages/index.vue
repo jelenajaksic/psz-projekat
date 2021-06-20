@@ -26,9 +26,17 @@
     </v-col>
     <v-col cols="12" lg="4">
       <v-card class="elevation-0">
-        <v-card-title class="headline"> Most common rent in BGD</v-card-title>
+        <v-card-title class="headline">Count by size</v-card-title>
         <v-card-text>
-          <count-size :series="series" />
+          <bar-chart :series="countBySize" :categories="sizeCategories" />
+        </v-card-text>
+      </v-card>
+    </v-col>
+    <v-col cols="12" lg="4">
+      <v-card class="elevation-0">
+        <v-card-title class="headline">Count by year</v-card-title>
+        <v-card-text>
+          <bar-chart :series="countByYear" :categories="yearCategories" />
         </v-card-text>
       </v-card>
     </v-col>
@@ -49,57 +57,32 @@
 </template>
 
 <script>
-import CountSize from '../components/CountSize.vue'
+import BarChart from '../components/BarChart.vue'
 import MostCommon from '../components/MostCommon.vue'
 export default {
-  components: { MostCommon, CountSize },
+  components: { MostCommon, BarChart },
   async asyncData({ $axios }) {
-    // const data = app.$axios.get(`/most_common`)
-    // console.log(data)
-    // return {
-    //   commonSell: data.sell,
-    //   commonRent: data.rent,
-    //   commonAll: data.all,
-    // }
-    const [one, two] = await Promise.all([
+    const [one, two, three] = await Promise.all([
       $axios.get('/most_common'),
       $axios.get('/count_props_by_size'),
+      $axios.get('/count_props_by_year'),
     ])
-    // console.log(one, two)
 
     return {
       commonSell: one.data.sell,
       commonRent: one.data.rent,
       commonAll: one.data.all,
-      series: [
+      countBySize: [
         {
           data: two.data,
         },
       ],
+      countByYear: [
+        {
+          data: three.data,
+        },
+      ],
     }
-    // return $axios
-    //   .all(['/most_common', '/count_props_by_size'])
-    //   .then(
-    //     $axios.spread((...responses) => {
-    //       // .$get('/most_common')
-    //       // .then((data) => {
-    //       const responseOne = responses[0]
-    //       const responseTwo = responses[1]
-    //       console.log(responseOne)
-    //       console.log(responseTwo)
-    //       return {
-    //         commonSell: responseOne.sell,
-    //         commonRent: responseOne.rent,
-    //         commonAll: responseOne.all,
-    //         series: [
-    //           {
-    //             data: responseTwo,
-    //           },
-    //         ],
-    //       }
-    //     })
-    //   )
-    //   .catch((error) => console.log(error))
   },
   data() {
     return {
@@ -107,6 +90,27 @@ export default {
       commonSell: [],
       commonRent: [],
       commonAll: [],
+      sizeCategories: [
+        'Less than 35',
+        '36 - 50',
+        '51 - 65',
+        '66 - 80',
+        '81 - 95',
+        '96 - 110',
+        'More than 110',
+        'No size data',
+      ],
+      yearCategories: [
+        'Before 1951',
+        '1951 - 1960',
+        '1961 - 1970',
+        '1971 - 1980',
+        '1981 - 1990',
+        '1991 - 2000',
+        '2001 - 2010',
+        '2011 - 2020',
+        'Aftrer 2021',
+      ],
       headers: [
         { text: 'Location', value: 'location' },
         { text: 'URL', value: 'url' },
