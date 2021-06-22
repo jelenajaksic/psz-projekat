@@ -1,82 +1,97 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" lg="4">
-      <v-card class="elevation-0">
-        <v-card-title class="headline"> Most common in BGD</v-card-title>
-        <v-card-text he>
-          <full-donut :series="commonAllData" :labels="commonAllLabels" />
-        </v-card-text>
-      </v-card>
-    </v-col>
-    <v-col cols="12" lg="4">
-      <v-card class="elevation-0">
-        <v-card-title class="headline"> Most common sell in BGD</v-card-title>
-        <v-card-text>
-          <full-donut :series="commonSellData" :labels="commonSellLabels" />
-        </v-card-text>
-      </v-card>
-    </v-col>
-    <v-col cols="12" lg="4">
-      <v-card class="elevation-0">
-        <v-card-title class="headline"> Most common rent in BGD</v-card-title>
-        <v-card-text>
-          <full-donut :series="commonRentData" :labels="commonRentLabels" />
-        </v-card-text>
-      </v-card>
-    </v-col>
-    <v-col cols="12" lg="4">
-      <v-card class="elevation-0">
-        <v-card-title class="headline">Count by size</v-card-title>
-        <v-card-text>
-          <bar-chart :series="countBySize" :categories="sizeCategories" />
-        </v-card-text>
-      </v-card>
-    </v-col>
-    <v-col cols="12" lg="4">
-      <v-card class="elevation-0">
-        <v-card-title class="headline">Count by year</v-card-title>
-        <v-card-text>
-          <bar-chart :series="countByYear" :categories="yearCategories" />
-        </v-card-text>
-      </v-card>
-    </v-col>
-    <v-col v-for="item in sellRentRatio" :key="item.location" cols="12" lg="4">
-      <v-card class="elevation-0">
-        <v-card-title class="headline">
-          Sell / Rent Ratio for {{ item.location }}
-        </v-card-title>
-        <v-card-text>
-          <simple-donut
-            :series="[item.sell, item.rent]"
-            :labels="['Sell', 'Rent']"
-            :display-total="true"
-          />
-        </v-card-text>
-      </v-card>
-    </v-col>
-    <v-col cols="12" lg="4">
-      <v-card class="elevation-0">
-        <v-card-title class="headline">Count by price</v-card-title>
-        <v-card-text>
-          <bar-chart :series="countByPrice" :categories="priceCategories" />
-        </v-card-text>
-      </v-card>
-    </v-col>
-    <v-col cols="12" lg="4">
-      <v-card class="elevation-0">
-        <v-card-title class="headline">
-          With / Without parking ratio for Beograd
-        </v-card-title>
-        <v-card-text>
-          <simple-donut
-            :series="parkingData"
-            :labels="['With Parking', 'Total']"
-            :display-total="false"
-          />
-        </v-card-text>
-      </v-card>
-    </v-col>
-  </v-row>
+  <div>
+    <v-row justify="center" align="center">
+      <v-col cols="12" lg="4">
+        <v-card class="elevation-0">
+          <v-card-title class="headline"> Most common in BGD</v-card-title>
+          <v-card-text he>
+            <full-donut :series="commonAllData" :labels="commonAllLabels" />
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" lg="4">
+        <v-card class="elevation-0">
+          <v-card-title class="headline"> Most common sell in BGD</v-card-title>
+          <v-card-text>
+            <full-donut :series="commonSellData" :labels="commonSellLabels" />
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" lg="4">
+        <v-card class="elevation-0">
+          <v-card-title class="headline"> Most common rent in BGD</v-card-title>
+          <v-card-text>
+            <full-donut :series="commonRentData" :labels="commonRentLabels" />
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row justify="center" align="center">
+      <v-col cols="12" lg="5">
+        <v-card class="elevation-0">
+          <v-card-title class="headline">Count by size</v-card-title>
+          <v-card-text>
+            <bar-chart :series="countBySize" :categories="sizeCategories" />
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" lg="5">
+        <v-card class="elevation-0">
+          <v-card-title class="headline">Count by year</v-card-title>
+          <v-card-text>
+            <bar-chart :series="countByYear" :categories="yearCategories" />
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row justify="center" align="center">
+      <v-col
+        v-for="item in sellRentRatio"
+        :key="item.location"
+        cols="12"
+        lg="4"
+      >
+        <v-card class="elevation-0">
+          <v-card-title class="headline">
+            Sell / Rent Ratio for {{ item.location }}
+          </v-card-title>
+          <v-card-text>
+            <simple-donut
+              :series="[item.sell, item.rent]"
+              :labels="['Sell', 'Rent']"
+              :display-total="true"
+            />
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row justify="center" align="center">
+      <v-col cols="12" lg="4">
+        <v-card class="elevation-0">
+          <v-card-title class="headline">Count by price</v-card-title>
+          <v-card-text>
+            <bar-chart :series="countByPrice" :categories="priceCategories" />
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row justify="center" align="center">
+      <v-col cols="12" lg="4">
+        <v-card class="elevation-0">
+          <v-card-title class="headline">
+            With / Without parking ratio for Beograd
+          </v-card-title>
+          <v-card-text>
+            <simple-donut
+              :series="parkingData"
+              :labels="['With Parking', 'Total']"
+              :display-total="false"
+            />
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>

@@ -39,7 +39,6 @@ export default {
                   show: true,
                   fontSize: '22px',
                   fontFamily: 'Helvetica, Arial, sans-serif',
-                  fontWeight: 600,
                   formatter(val) {
                     return val
                   },
@@ -48,7 +47,6 @@ export default {
                   show: true,
                   fontSize: '22px',
                   fontFamily: 'Helvetica, Arial, sans-serif',
-                  fontWeight: 600,
                   formatter(val) {
                     return val
                   },
@@ -59,7 +57,6 @@ export default {
                   label: 'Total [Ratio]',
                   fontSize: '22px',
                   fontFamily: 'Helvetica, Arial, sans-serif',
-                  fontWeight: 600,
                   color: '#373d3f',
                   formatter(w) {
                     return w.globals.seriesTotals.reduce((a, b) => {

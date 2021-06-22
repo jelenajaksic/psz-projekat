@@ -51,6 +51,10 @@ export default {
         },
         xaxis: {
           categories: this.categories,
+          labels: {
+            show: true,
+            minHeight: 100,
+          },
         },
         yaxis: {
           title: {
