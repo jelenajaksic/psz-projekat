@@ -17,7 +17,11 @@ urlpatterns = [
          name='get_registration'),
     path('sell_rent_ratio', views.get_sell_rent_ratio, name='get_sell_rent_ratio'),
     path('count_props_by_price_category', views.get_props_by_price_category, name='get_props_by_price_category'),
-    path('num_of_properties_with_parking', views.get_number_of_properties_with_parking, name='get_number_of_properties_with_parking')
+    path('num_of_properties_with_parking', views.get_number_of_properties_with_parking, name='get_number_of_properties_with_parking'),
+    path('top30', views.get_top_30, name='get_top_30'),
+    path('top100', views.get_top_100, name='get_top_100'),
+    path('2020', views.get_2020, name='get_2020'),
+    path('top30_rooms_area', views.get_top_30_rooms_area, name='get_top_30_rooms_area'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

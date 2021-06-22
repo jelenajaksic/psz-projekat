@@ -22,6 +22,7 @@ export default {
   data() {
     return {
       chartOptions: {
+        colors: ['#FBC740', '#66D2D6'],
         theme: {
           mode: 'light',
         },
@@ -54,6 +55,8 @@ export default {
           labels: {
             show: true,
             minHeight: 100,
+            rotate: -45,
+            rotateAlways: true,
           },
         },
         yaxis: {

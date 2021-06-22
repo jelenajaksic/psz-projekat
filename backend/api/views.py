@@ -216,3 +216,75 @@ def get_number_of_properties_with_parking(request):
     """, con=con)
     result = df.to_dict('list')
     return Response(result)
+
+@api_view(['GET'])    
+def get_top_30(request):
+    db = DbManager.Instance()
+    con = db.create_engine()
+    df_a = pd.read_sql("""
+    select location, price, url from db.realestate where property_type='a' and add_type='s' order by price desc limit 30
+    """, con=con)
+    df_h = pd.read_sql("""
+    select location, price, url from db.realestate where property_type='h' and add_type='s' order by price desc limit 30
+    """, con=con)
+    result_a = df_a.fillna("").to_dict('records')
+    result_h = df_h.fillna("").to_dict('records')
+    result = {
+        "houses": result_h,
+        "apartments": result_a
+    }
+    return Response(result)
+
+@api_view(['GET'])    
+def get_top_100(request):
+    db = DbManager.Instance()
+    con = db.create_engine()
+    df_a = pd.read_sql("""
+    select property_type, location, size, price, url from db.realestate where property_type='a' order by size desc limit 100
+    """, con=con)
+    df_h = pd.read_sql("""
+    select property_type, location, size, price, url from db.realestate where property_type='h' order by size desc limit 100
+    """, con=con)
+    result_a = df_a.fillna("").to_dict('records')
+    result_h = df_h.fillna("").to_dict('records')
+    result = {
+        "houses": result_h,
+        "apartments": result_a
+    }
+    return Response(result)
+
+@api_view(['GET'])    
+def get_2020(request):
+    db = DbManager.Instance()
+    con = db.create_engine()
+    df_r = pd.read_sql("""
+    select property_type, location, size, price, url from db.realestate where add_type='r' and year=2020 order by price desc
+    """, con=con)
+    df_s = pd.read_sql("""
+    select property_type, location, size, price, url from db.realestate where add_type='s' and year=2020 order by price desc
+    """, con=con)
+    result_s = df_s.fillna("").to_dict('records')
+    result_r = df_r.fillna("").to_dict('records')
+    result = {
+        "sell": result_s,
+        "rent": result_r
+    }
+    return Response(result)
+
+@api_view(['GET'])    
+def get_top_30_rooms_area(request):
+    db = DbManager.Instance()
+    con = db.create_engine()
+    df_r = pd.read_sql("""
+    select location, property_type, add_type, price, rooms, url from db.realestate order by rooms desc limit 30
+    """, con=con)
+    df_a = pd.read_sql("""
+    select location, add_type, area, price, url from db.realestate where property_type='h' order by area desc limit 30
+    """, con=con)
+    result_r = df_r.fillna("").to_dict('records')
+    result_a = df_a.fillna("").to_dict('records')
+    result = {
+        "rooms": result_r,
+        "area": result_a
+    }
+    return Response(result)

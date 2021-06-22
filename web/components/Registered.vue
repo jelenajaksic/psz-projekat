@@ -1,13 +1,13 @@
 <template>
-  <v-row justify="center" align="center" class="mx-0">
+  <v-row justify="center" align="center">
     <v-col cols="4">
-      <v-card color="cyan darken-1" :elevation="0">
+      <v-card color="accent" :elevation="0">
         <v-row class="ma-0">
           <v-col cols="8">
             <v-list-item two-line class="mt-8">
               <v-list-item-content>
                 <v-list-item-title class="headline mb-1 white--text">
-                  {{ item.registered.toLocaleString() }}
+                  <strong>{{ item.registered.toLocaleString() }}</strong>
                 </v-list-item-title>
                 <v-list-item-subtitle class="white--text"
                   >Number of registered {{ type }}</v-list-item-subtitle
@@ -24,13 +24,13 @@
       </v-card>
     </v-col>
     <v-col cols="4">
-      <v-card color="cyan darken-1" :elevation="0">
+      <v-card color="accent" :elevation="0">
         <v-row class="ma-0">
           <v-col cols="8">
             <v-list-item two-line class="mt-8">
               <v-list-item-content>
                 <v-list-item-title class="headline mb-1 white--text">
-                  {{ item.unregistered.toLocaleString() }}
+                  <strong>{{ item.unregistered.toLocaleString() }}</strong>
                 </v-list-item-title>
                 <v-list-item-subtitle class="white--text"
                   >Number of not registered {{ type }}</v-list-item-subtitle
@@ -47,13 +47,13 @@
       </v-card>
     </v-col>
     <v-col cols="4">
-      <v-card color="cyan darken-1" :elevation="0">
+      <v-card color="accent" :elevation="0">
         <v-row class="ma-0">
           <v-col cols="8">
             <v-list-item two-line class="mt-8">
               <v-list-item-content>
                 <v-list-item-title class="headline mb-1 white--text">
-                  {{ item.nodata.toLocaleString() }}
+                  <strong>{{ item.nodata.toLocaleString() }}</strong>
                 </v-list-item-title>
                 <v-list-item-subtitle class="white--text"
                   >Number of {{ type }} with no registration data

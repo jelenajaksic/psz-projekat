@@ -27,7 +27,7 @@
       </v-col>
     </v-row>
     <v-row justify="center" align="center">
-      <v-col cols="12" lg="5">
+      <v-col cols="12" lg="6">
         <v-card class="elevation-0">
           <v-card-title class="headline">Count by size</v-card-title>
           <v-card-text>
@@ -35,7 +35,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" lg="5">
+      <v-col cols="12" lg="6">
         <v-card class="elevation-0">
           <v-card-title class="headline">Count by year</v-card-title>
           <v-card-text>
@@ -64,29 +64,25 @@
           </v-card-text>
         </v-card>
       </v-col>
-    </v-row>
-    <v-row justify="center" align="center">
       <v-col cols="12" lg="4">
         <v-card class="elevation-0">
-          <v-card-title class="headline">Count by price</v-card-title>
-          <v-card-text>
-            <bar-chart :series="countByPrice" :categories="priceCategories" />
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row justify="center" align="center">
-      <v-col cols="12" lg="4">
-        <v-card class="elevation-0">
-          <v-card-title class="headline">
-            With / Without parking ratio for Beograd
-          </v-card-title>
+          <v-card-title class="headline"> Beograd Parking </v-card-title>
           <v-card-text>
             <simple-donut
               :series="parkingData"
               :labels="['With Parking', 'Total']"
               :display-total="false"
             />
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row justify="center" align="center">
+      <v-col cols="12">
+        <v-card class="elevation-0">
+          <v-card-title class="headline">Count by price</v-card-title>
+          <v-card-text>
+            <bar-chart :series="countByPrice" :categories="priceCategories" />
           </v-card-text>
         </v-card>
       </v-col>
@@ -110,7 +106,6 @@ export default {
       $axios.get('/count_props_by_price_category'),
       $axios.get('/num_of_properties_with_parking'),
     ])
-    console.log(six.data.parking)
     return {
       commonSellLabels: one.data.sell.labels,
       commonSellData: one.data.sell.data,

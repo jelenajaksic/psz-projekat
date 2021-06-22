@@ -8,6 +8,7 @@
           :to="item.to"
           router
           exact
+          color="primary"
         >
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
@@ -40,8 +41,13 @@ export default {
           to: '/',
         },
         {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
+          icon: 'mdi-google-assistant',
+          title: 'Statistics',
+          to: '/statistics',
+        },
+        {
+          icon: 'mdi-database',
+          title: 'Database',
           to: '/inspire',
         },
       ],
@@ -53,3 +59,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.color {
+  background-color: red !important;
+}
+</style>

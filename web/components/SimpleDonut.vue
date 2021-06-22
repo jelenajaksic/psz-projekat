@@ -26,6 +26,7 @@ export default {
   data() {
     return {
       chartOptions: {
+        colors: ['#FBC740', '#66D2D6'],
         chart: {
           type: 'donut',
         },
@@ -72,6 +73,9 @@ export default {
           dropShadow: {
             enabled: false,
           },
+        },
+        legend: {
+          position: 'bottom',
         },
       },
     }

@@ -22,6 +22,7 @@ export default {
   data() {
     return {
       chartOptions: {
+        colors: ['#FBC740'],
         chart: {
           type: 'pie',
           dropShadow: {
@@ -32,6 +33,7 @@ export default {
         theme: {
           monochrome: {
             enabled: true,
+            color: '#66D2D6',
           },
         },
         plotOptions: {

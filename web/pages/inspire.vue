@@ -26,6 +26,12 @@
                 <v-icon> mdi-link-variant </v-icon>
               </v-btn>
             </template>
+            <template #[`item.add_type`]="{ item }">
+              {{ item.add_type == 's' ? 'For Sale' : 'For Rent' }}
+            </template>
+            <template #[`item.property_type`]="{ item }">
+              {{ item.property_type == 'a' ? 'Apartment' : 'House' }}
+            </template>
           </v-data-table>
         </v-card-text>
       </v-card>
