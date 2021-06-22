@@ -203,3 +203,16 @@ def get_props_by_price_category(request):
     """, con=con)
     result = df.fillna("").to_dict('records')
     return Response(result)
+
+
+@api_view(['GET'])
+def get_number_of_properties_with_parking(request):
+    db = DbManager.Instance()
+    con = db.create_engine()
+    df = pd.read_sql("""
+    select count(*) as parking from db.realestate where parking = 1 and add_type ='s' and location='Beograd'
+    union
+    select count(*) from db.realestate where add_type ='s' and location='Beograd'
+    """, con=con)
+    result = df.to_dict('list')
+    return Response(result)

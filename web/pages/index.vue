@@ -49,6 +49,7 @@
           <simple-donut
             :series="[item.sell, item.rent]"
             :labels="['Sell', 'Rent']"
+            :display-total="true"
           />
         </v-card-text>
       </v-card>
@@ -58,6 +59,20 @@
         <v-card-title class="headline">Count by price</v-card-title>
         <v-card-text>
           <bar-chart :series="countByPrice" :categories="priceCategories" />
+        </v-card-text>
+      </v-card>
+    </v-col>
+    <v-col cols="12" lg="4">
+      <v-card class="elevation-0">
+        <v-card-title class="headline">
+          With / Without parking ratio for Beograd
+        </v-card-title>
+        <v-card-text>
+          <simple-donut
+            :series="parkingData"
+            :labels="['With Parking', 'Total']"
+            :display-total="false"
+          />
         </v-card-text>
       </v-card>
     </v-col>
@@ -72,13 +87,15 @@ import SimpleDonut from '../components/SimpleDonut'
 export default {
   components: { BarChart, FullDonut, SimpleDonut },
   async asyncData({ $axios }) {
-    const [one, two, three, four, five] = await Promise.all([
+    const [one, two, three, four, five, six] = await Promise.all([
       $axios.get('/most_common'),
       $axios.get('/count_props_by_size'),
       $axios.get('/count_props_by_year'),
       $axios.get('/sell_rent_ratio'),
       $axios.get('/count_props_by_price_category'),
+      $axios.get('/num_of_properties_with_parking'),
     ])
+    console.log(six.data.parking)
     return {
       commonSellLabels: one.data.sell.labels,
       commonSellData: one.data.sell.data,
@@ -105,6 +122,7 @@ export default {
           data: five.data,
         },
       ],
+      parkingData: six.data.parking,
     }
   },
   data() {

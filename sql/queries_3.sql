@@ -61,6 +61,6 @@ group by category
 
 
 
-select count(*) from db.realestate where parking = 1 and add_type ='s'
-
-select count(*) from db.realestate where add_type ='s'
+select count(*) from db.realestate where parking = 1 and add_type ='s' and location='Beograd'
+union
+select count(*) from db.realestate where add_type ='s' and location='Beograd'
