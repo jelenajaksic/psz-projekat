@@ -1,5 +1,5 @@
--- db.realestate definition
-
+CREATE DATABASE IF NOT EXISTS db;
+USE db;
 CREATE TABLE `realestate` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `property_type` enum('a','h') DEFAULT NULL,

@@ -1,0 +1,57 @@
+version: "2.4"
+
+services:
+  mariadb:
+    container_name: apps_db
+    image: mariadb
+    networks:
+      - main
+    ports:
+      - "50505:3306"
+    command: --init-file /data/application/init_db.sql
+    volumes:
+      - ./sql/init_db.sql:/data/application/init_db.sql
+      - ${PWD}/mariadb:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+
+  backend:
+    container_name: apps_backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: >
+      bash -c "python3 manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/code
+    networks:
+      - main
+    ports:
+      - "8000:8000"
+      - "8888:8888"
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+
+  nginx:
+    container_name: apps_nginx
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+      - "./frontend:/app/"
+      - "/app/node_modules"
+    networks:
+      - main
+
+volumes:
+  pg-data:
+
+networks:
+  main:
+    driver: bridge

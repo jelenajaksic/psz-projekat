@@ -1,6 +1,6 @@
 {
-    "host":"localhost",
-    "port": 3306,
+    "host":"host.docker.internal",
+    "port": 50505,
     "user": "root",
     "password": "pass",
     "db": "db"

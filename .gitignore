@@ -3,3 +3,5 @@ src/webcrawler/webcrawler/filename.csv
 *.pyc
 __pycache__/
 *.py[cod]
+backend/backend/settings/dev.py
+backend/backend/settings/prod.py

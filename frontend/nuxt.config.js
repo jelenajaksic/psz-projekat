@@ -1,6 +1,23 @@
 import colors from 'vuetify/es5/util/colors'
 
 export default {
+  env: {
+    // fallback value
+    baseUrl: process.env.BASE_URL,
+  },
+  publicRuntimeConfig: {
+    axios: {
+      browserBaseURL:
+        process.env.BROWSER_BASE_URL || 'http://localhost:8000/api',
+    },
+  },
+
+  privateRuntimeConfig: {
+    axios: {
+      baseURL: process.env.BASE_URL || 'http://backend:8000/api',
+    },
+  },
+
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
 
@@ -47,11 +64,11 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'http://localhost:8000/api',
-    proxyHeaders: false,
-    credentials: false,
-    Accept: 'text/plain, */*',
-    mode: 'no-cors',
+    // baseURL: 'http://localhost:8000/api',
+    // proxyHeaders: false,
+    // credentials: false,
+    // Accept: 'text/plain, */*',
+    // mode: 'no-cors',
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
@@ -80,4 +97,8 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
+  server: {
+    port: process.env.NUXT_PORT || 3000, // default: 3000
+    host: process.env.NUXT_HOST || '0.0.0.0', // default: localhost
+  },
 }
