@@ -34,11 +34,11 @@
           required
         ></v-select>
 
-        <v-btn :disabled="!valid" color="success" class="mr-4" @click="predict">
+        <v-btn :disabled="!valid" color="accent" class="mr-4" @click="predict">
           Predict
         </v-btn>
 
-        <v-btn color="warning" class="mr-4" @click="reset"> Reset Form </v-btn>
+        <v-btn color="primary" class="mr-4" @click="reset"> Reset Form </v-btn>
       </v-form>
     </v-card-text>
     <v-card-text class="headline">

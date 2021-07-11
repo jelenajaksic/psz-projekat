@@ -309,10 +309,10 @@ def get_top_30_rooms_area(request):
 
 @api_view(['POST'])
 def predict_with_linear_regression(request):
-    bias = 0.08944277879143522
-    weights = [0.53251661, -0.34636063, 0.27110472, 0.01596352, -0.0174907, 0.00358648]
+    bias = 0.29042838911780794
+    weights = [ 0.29275168, -0.15640629, 0.35972621, 0.02889403, -0.01687558, -0.01211376]
     min_price = 10000
-    max_price = 145000
+    max_price = 499900
     body = json.loads(request.body.decode('utf-8'))
     size = body['size']
     dist = body['dist']
@@ -320,8 +320,7 @@ def predict_with_linear_regression(request):
     old = body['old']
     new = body['new']
     nodata = body['nodata']
-    price = bias + weights[0] * size + weights[1] * dist + weights[2] * rooms + weights[3] * old + weights[4] * new + \
-            weights[0] * nodata
+    price = bias + weights[0] * size + weights[1] * dist + weights[2] * rooms + weights[3] * old + weights[4] * new + weights[0] * nodata
     price = price * (max_price - min_price) + min_price
     price = round(price, 0)
     return Response(price)
@@ -329,7 +328,7 @@ def predict_with_linear_regression(request):
 
 @api_view(['POST'])
 def predict_with_knn(request):
-    default_k = 101
+    default_k = 97
     body = json.loads(request.body.decode('utf-8'))
     k_nbrs = body['k_nbrs'] if body['k_nbrs'] else default_k
     prop = [body['size'], body['dist'], body['rooms'], body['new'], body['old'], body['nodata']]
@@ -423,7 +422,7 @@ def predict_price_with_knn(prop, num_neighbors=97):
 
     prop = row_normalization(prop, data_min, data_max)
 
-    # # predict the label
+    # predict the label
     label_euc = predict_classification(data, prop, num_neighbors, euclidean_distance)
     label_man = predict_classification(data, prop, num_neighbors, manhattan_distance)
 
