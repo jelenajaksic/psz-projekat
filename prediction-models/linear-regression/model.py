@@ -33,8 +33,6 @@ class LinearRegression:
                 y_hat = np.dot(X_batch, self.weights) + self.bias
                 
                 # Calculate derivatives
-                # partial_w = (1 / X_batch.shape[0]) * (2 * np.dot(X_batch.T, (y_hat - y_batch)))
-                # partial_d = (1 / X_batch.shape[0]) * (2 * np.sum(y_hat - y_batch))
                 partial_w = (1 / X_batch.shape[0]) * (np.dot(X_batch.T, (y_hat - y_batch)))
                 partial_d = (1 / X_batch.shape[0]) * (np.sum(y_hat - y_batch))
 
