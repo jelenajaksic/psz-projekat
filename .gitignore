@@ -7,3 +7,10 @@ backend/backend/settings/dev.py
 backend/backend/settings/prod.py
 .env
 mariadb
+.idea/misc.xml
+.gitignore
+.idea/psz-projekat.iml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/inspectionProfiles/profiles_settings.xml
