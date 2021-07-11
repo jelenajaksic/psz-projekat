@@ -4,8 +4,7 @@ import pandas as pd
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import json
-
-# Create your views here.
+from math import sqrt
 
 
 @api_view(['POST'])
@@ -17,12 +16,14 @@ def get_all(request):
     itemsPerPage = body['itemsPerPage']
     sortBy = body['sortBy']
     sortDesc = body['sortDesc']
-    start = (page-1)*itemsPerPage
-    end = page*itemsPerPage
+    start = (page - 1) * itemsPerPage
+    end = page * itemsPerPage
 
     if len(sortBy) > 0:
         df = pd.read_sql(
-            "select * from realestate order by {} {} limit {},{}".format(sortBy[0], 'desc' if sortDesc[0] == True else 'asc', start, itemsPerPage), con=con)
+            "select * from realestate order by {} {} limit {},{}".format(sortBy[0],
+                                                                         'desc' if sortDesc[0] == True else 'asc',
+                                                                         start, itemsPerPage), con=con)
     else:
         df = pd.read_sql(
             "select * from realestate limit {},{}".format(start, itemsPerPage), con=con)
@@ -35,16 +36,22 @@ def get_most_common(request):
     db = DbManager.Instance()
     con = db.create_engine()
     df_sell = pd.read_sql(
-        """select block, count(*) as number from db.realestate where add_type = 's' and location='Beograd' group by block order by number desc limit 10""", con=con)
+        """select block, count(*) as number from db.realestate where add_type = 's' and location='Beograd' group by 
+        block order by number desc limit 10""",
+        con=con)
     result_sell_labels = df_sell.block
     result_sell_data = df_sell.number
     df_rent = pd.read_sql(
-        """select block, count(*) as number from db.realestate where add_type = 'r' and location='Beograd' group by block order by number desc limit 10""", con=con)
+        """select block, count(*) as number from db.realestate where add_type = 'r' and location='Beograd' group by 
+        block order by number desc limit 10""",
+        con=con)
     # result_rent = df_rent.to_dict('records')
     result_rent_labels = df_rent.block
     result_rent_data = df_rent.number
     df = pd.read_sql(
-        """select block, count(*) as number from db.realestate where location='Beograd' group by block order by number desc limit 10""", con=con)
+        """select block, count(*) as number from db.realestate where location='Beograd' group by block order by 
+        number desc limit 10""",
+        con=con)
     # result_all = df.to_dict('records')
     result_all_labels = df.block
     result_all_data = df.number
@@ -133,19 +140,23 @@ def get_number_of_properties_by_city(request):
     db = DbManager.Instance()
     con = db.create_engine()
     df = pd.read_sql(
-        'select location, COUNT(*) as number from db.realestate where add_type = \'s\' group by location order by number desc', con=con)
+        'select location, COUNT(*) as number from db.realestate where add_type = \'s\' group by location order by number desc',
+        con=con)
     df.location = df.apply(lambda x: x.location.title(), axis=1)
     result = df.fillna("").to_dict('records')
     return Response(result)
+
 
 @api_view(['GET'])
 def get_registration(request):
     db = DbManager.Instance()
     con = db.create_engine()
     house = pd.read_sql(
-        "select registered, count(*) as number from db.realestate where property_type = 'h' group by registered", con=con)
+        "select registered, count(*) as number from db.realestate where property_type = 'h' group by registered",
+        con=con)
     apartment = pd.read_sql(
-        "select registered, count(*) as number from db.realestate where property_type = 'a' group by registered", con=con)
+        "select registered, count(*) as number from db.realestate where property_type = 'a' group by registered",
+        con=con)
     h = house.fillna("").to_dict('records')
     a = apartment.fillna("").to_dict('records')
     print(h[2])
@@ -163,7 +174,8 @@ def get_registration(request):
     }
     return Response(result)
 
-@api_view(['GET'])    
+
+@api_view(['GET'])
 def get_sell_rent_ratio(request):
     db = DbManager.Instance()
     con = db.create_engine()
@@ -182,6 +194,7 @@ def get_sell_rent_ratio(request):
     """, con=con)
     result = df.to_dict('records')
     return Response(result)
+
 
 @api_view(['GET'])
 def get_props_by_price_category(request):
@@ -217,7 +230,8 @@ def get_number_of_properties_with_parking(request):
     result = df.to_dict('list')
     return Response(result)
 
-@api_view(['GET'])    
+
+@api_view(['GET'])
 def get_top_30(request):
     db = DbManager.Instance()
     con = db.create_engine()
@@ -235,7 +249,8 @@ def get_top_30(request):
     }
     return Response(result)
 
-@api_view(['GET'])    
+
+@api_view(['GET'])
 def get_top_100(request):
     db = DbManager.Instance()
     con = db.create_engine()
@@ -253,7 +268,8 @@ def get_top_100(request):
     }
     return Response(result)
 
-@api_view(['GET'])    
+
+@api_view(['GET'])
 def get_2020(request):
     db = DbManager.Instance()
     con = db.create_engine()
@@ -271,7 +287,8 @@ def get_2020(request):
     }
     return Response(result)
 
-@api_view(['GET'])    
+
+@api_view(['GET'])
 def get_top_30_rooms_area(request):
     db = DbManager.Instance()
     con = db.create_engine()
@@ -288,3 +305,130 @@ def get_top_30_rooms_area(request):
         "area": result_a
     }
     return Response(result)
+
+
+@api_view(['POST'])
+def predict_with_linear_regression(request):
+    bias = 0.08944277879143522
+    weights = [0.53251661, -0.34636063, 0.27110472, 0.01596352, -0.0174907, 0.00358648]
+    min_price = 10000
+    max_price = 145000
+    body = json.loads(request.body.decode('utf-8'))
+    size = body['size']
+    dist = body['dist']
+    rooms = body['rooms']
+    old = body['old']
+    new = body['new']
+    nodata = body['nodata']
+    price = bias + weights[0] * size + weights[1] * dist + weights[2] * rooms + weights[3] * old + weights[4] * new + \
+            weights[0] * nodata
+    price = price * (max_price - min_price) + min_price
+    price = round(price, 0)
+    return Response(price)
+
+
+@api_view(['POST'])
+def predict_with_knn(request):
+    default_k = 101
+    body = json.loads(request.body.decode('utf-8'))
+    k_nbrs = body['k_nbrs'] if body['k_nbrs'] else default_k
+    prop = [body['size'], body['dist'], body['rooms'], body['new'], body['old'], body['nodata']]
+    price_euc, price_man = predict_price_with_knn(prop, k_nbrs)
+    res = {
+        "res_euc": price_euc,
+        "res_man": price_man
+    }
+    return Response(res)
+
+
+### KNN model
+# Load a CSV file
+def load_csv(url):
+    print('Load data')
+    return pd.read_csv(url)
+
+
+# Find the minimum and maximum for each column
+def dataset_minmax(dataset):
+    return dataset.min(), dataset.max()
+
+
+# Normalize data - minmax approach
+def normalize_data(data):
+    data = (data - data.min()) / (data.max() - data.min())
+    return data.values.tolist()
+
+
+# Row normalization
+def row_normalization(row, min, max):
+    row_norm = list()
+    for i in range(len(row)):
+        row_norm.append((row[i] - min[i]) / (max[i] - min[i]))
+    return row_norm
+
+
+# Calculate the Euclidean distance between two vectors
+def euclidean_distance(row1, row2):
+    distance = 0.0
+    for i in range(len(row1) - 1):
+        distance += (row1[i] - row2[i]) ** 2
+    return sqrt(distance)
+
+
+# Calculate the Manhattan distance between two vectors
+def manhattan_distance(row1, row2):
+    distance = 0.0
+    for i in range(len(row1) - 1):
+        distance += abs(row1[i] - row2[i])
+    return distance
+
+
+# Locate the most similar neighbors
+def get_neighbors(train, test_row, num_neighbors, func):
+    distances = list()
+    for train_row in train:
+        dist = func(test_row, train_row)
+        distances.append((train_row, dist))
+    distances.sort(key=lambda tup: tup[1])
+    neighbors = list()
+    for i in range(num_neighbors):
+        neighbors.append(distances[i][0])
+    return neighbors
+
+
+# Make a prediction with neighbors
+def predict_classification(train, test_row, num_neighbors, func):
+    neighbors = get_neighbors(train, test_row, num_neighbors, func)
+    output_values = [row[-1] for row in neighbors]
+    prediction = max(set(output_values), key=output_values.count)
+    return prediction
+
+
+# Make a prediction with KNN on Iris Dataset
+def predict_price_with_knn(prop, num_neighbors=97):
+    # Load and ajdust data
+    data = load_csv('/Users/jelenajaksic/Desktop/psz-projekat/prediction-models/bgd10.csv')
+    data['rooms'] = data['rooms'].fillna(data['rooms'].median())
+    data['new'] = data.apply(lambda x: 1 if x.year == 1 else 0, axis=1)
+    data['old'] = data.apply(lambda x: 1 if x.year == -1 else 0, axis=1)
+    data['no_data'] = data.apply(lambda x: 1 if x.year == 0 else 0, axis=1)
+    data['class'] = data.apply(lambda
+                                   x: 1 if x.price < 50000 else 2 if x.price < 100000 else 3 if x.price < 150000 else 4 if x.price < 200000 else 5,
+                               axis=1)
+    data = data.drop("year", axis=1)
+    data = data.drop("price", axis=1)
+
+    # Normalize data
+    data_min, data_max = dataset_minmax(data)
+    data = normalize_data(data)
+
+    prop = row_normalization(prop, data_min, data_max)
+
+    # # predict the label
+    label_euc = predict_classification(data, prop, num_neighbors, euclidean_distance)
+    label_man = predict_classification(data, prop, num_neighbors, manhattan_distance)
+
+    label_euc = int(label_euc * (data_max[-1] - data_min[-1]) + data_min[-1])
+    label_man = int(label_man * (data_max[-1] - data_min[-1]) + data_min[-1])
+
+    return label_euc, label_man

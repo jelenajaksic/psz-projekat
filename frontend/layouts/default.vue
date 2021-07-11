@@ -36,12 +36,12 @@ export default {
       fixed: false,
       items: [
         {
-          icon: 'mdi-apps',
+          icon: 'mdi-chart-donut',
           title: 'Dashboard',
           to: '/',
         },
         {
-          icon: 'mdi-google-assistant',
+          icon: 'mdi-chart-line',
           title: 'Statistics',
           to: '/statistics',
         },
@@ -49,6 +49,11 @@ export default {
           icon: 'mdi-database',
           title: 'Database',
           to: '/inspire',
+        },
+        {
+          icon: 'mdi-chart-scatter-plot',
+          title: 'Predictions',
+          to: '/predictions',
         },
       ],
       miniVariant: false,

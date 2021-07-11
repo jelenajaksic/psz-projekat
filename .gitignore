@@ -6,3 +6,4 @@ __pycache__/
 backend/backend/settings/dev.py
 backend/backend/settings/prod.py
 .env
+mariadb
