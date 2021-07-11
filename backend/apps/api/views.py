@@ -342,11 +342,6 @@ def predict_with_knn(request):
 
 
 ### KNN model
-# Load a CSV file
-def load_csv(url):
-    print('Load data')
-    return pd.read_csv(url)
-
 
 # Find the minimum and maximum for each column
 def dataset_minmax(dataset):
@@ -407,7 +402,11 @@ def predict_classification(train, test_row, num_neighbors, func):
 # Make a prediction with KNN on Iris Dataset
 def predict_price_with_knn(prop, num_neighbors=97):
     # Load and ajdust data
-    data = load_csv('/Users/jelenajaksic/Desktop/psz-projekat/prediction-models/bgd10.csv')
+    db = DbManager.Instance()
+    con = db.create_engine()
+    data = pd.read_sql("""
+    select * from db.knn
+    """, con=con)
     data['rooms'] = data['rooms'].fillna(data['rooms'].median())
     data['new'] = data.apply(lambda x: 1 if x.year == 1 else 0, axis=1)
     data['old'] = data.apply(lambda x: 1 if x.year == -1 else 0, axis=1)

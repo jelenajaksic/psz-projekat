@@ -9,5 +9,8 @@
         "PYTHONPATH": "${workspaceFolder}",
     },
     "python.envFile": "${workspaceFolder}/.env",
-    "python.pythonPath": ".venv/bin/python"
+    "python.pythonPath": ".venv/bin/python",
+    "python.analysis.extraPaths": [
+        "prediction-models"
+    ]
 }
